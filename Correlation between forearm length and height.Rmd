@@ -1,0 +1,90 @@
+---
+title: "Correlation between forearm length and height"
+author: "as5312"
+date: "September 26, 2020"
+output:
+  html_document: default
+  word_document: default
+---
+
+## I. Introduction 
+
+Part 1 
+
+The title to summarize assignment 1 is "Correlation between forearm length and height".
+The sample data was collected through a survey taken by the current class of STA302 students on quercus where they were asked to enter their height and forearm length in cm.
+I then randomly took a sample of this data and used it as my data set as instructed. 
+The explanatory variable is forearm length and the response variable is height. I chose forearm length as the explanatory variable to show that it is a good predictor of the height of a person. So the objective of this assignment will be to show that there is some correlation between the length of a person's forearm and their height. The null hypothesis will be that $b_1 =0$ and the alternate hypothesis will be $b_1$ is not zero. 
+
+
+## II. Exploratory Data Analysis
+
+Part 2 
+```{r, echo = FALSE}
+library(ggplot2)
+
+class_data <- read.csv("a20a1data.csv")
+set.seed(5312)
+sampled_class_data_index <- sample(1:nrow(class_data), 10)
+sampled_class_data <- class_data[sampled_class_data_index,]
+attach(sampled_class_data)
+
+#Scatter plot
+ggplot(sampled_class_data, aes(x=forearm, y=height))+geom_point(color= "blue") +       geom_smooth(method = "lm", color = "red", se = FALSE) + 
+labs(title = "Scatter plot of height against forearm length #5312", x = "forearm length (cm)", y = "height (cm)")
+
+
+#QQ-plot for height
+qqnorm(height, main = "Normal Q-Q plot for height of students (cm) #5312", 
+       xlab = "Theoretical Quantiles for height", 
+       ylab = "Sample Quantiles for height (cm)")
+qqline(height, col = "blue")
+
+#Histogram for height
+hist(height, xlab = "Height of students (cm)", ylab = "Number of students", 
+     main = "Histogram of height of students (cm) #5312")
+
+summary(height)
+summary(forearm)
+```
+
+The response variable, height, is approximately normal as can be seen by the qqplot. In the qqplot we can see that the majority of the points lie either on or very close to the line of best fit (blue) except on the ends, indicating that the data is approximately normally distributed. 
+
+The histogram however does not indicate as strong a normal distribution since the sample data of 10 students collected was random and so it does not properly describe the entire data set. Hence, we see that the histogram does not have a bell-shaped curve and is not symmetric about the mean. 
+
+From the scatter plot above we can see that there is a weak, positive correlation between forearm length and height since some points lie close to the line and there is one point touching the line but there are a few points quite far away from the line as well. Perhaps with a better data set we would see a relatively stronger positive correlation. 
+
+To describe the spread of data I used the summary(height) and summary(forearm) functions. From the summary of height we can see that the center/median of the data is 179. The first quartile is 169.2 and the third quartile 181 giving us 11.8 as the IQR which tells us that the data points are not too spread out. We can also see that the data has a symmetrical distribution since the mean and median are relatively close together. For the data points of forearm length we can see that the IQR is 7.63 which tells us that the data points are even closer than those for height. The mean and median of forearm length are close as well indicating that the data is approximately normally distributed since the mean approximately lies in the center. However, the data also has some unusual points like the point (31.5, 189) which is quite far away from the line of best fit and does not fit the trend. 
+
+
+
+## III. Methods and Model
+
+Part 3 
+```{r, echo = FALSE, message = FALSE}
+
+library(ggplot2)
+
+#linear regression model of height against forearm length
+lmod = lm(height~forearm)
+summary(lmod)
+
+#scatter plot of the data with a line of best fit using the linear model
+ggplot(sampled_class_data, aes(x=forearm, y=height))+geom_point(color= "blue") +       geom_smooth(method = "lm", color = "red", se = FALSE) + 
+labs(title = "Scatter plot of height against forearm length #5312", x = "forearm length (cm)", y = "height (cm)")
+
+```
+Using the lmod() function we can see that the linear regression model that we get is: 
+
+$\hat{y}= 160.6829 + 0.5039x$
+
+Looking at the linear regression model above we can see that the regression parameters are not zero. Our first regression parameter $b_{0}$ intercepts the y-axis at 160.6829 (as shown in the summary of the linear model) so it does not pass through the origin. Our second regression parameter $b_{1}$ is 0.5039 which tells us that there is a positive correlation between forearm length and height, so when forearm length increases, so does height. Interpreting $b_{0}$ further we see that 160.6829 is the height of a student whose forearm length is 0 cm. However, since x cannot possibly take on the value 0 (since it is not within the range of the predictor values) in this study, the interpretation of the constant is not useful. Interpreting $b_{1}$ further we see that since the regression coefficient is 0.5039. This means that in this model, a person's height increases by 0.5039 cm with each additional cm of forearm length. So using this linear model we can conclude that there is a positive correlation between a person's forearm length and their height, i.e. as forearm length increases, height increases. Additionally, we get a p-value of 0.0824 and since our significance level is $\alpha = 0.05$, this means that our null hypothesis is accepted, i.e. there is no correlation between forearm length and height. 
+
+
+## IV. Discussions and Limitations
+
+Part 4 
+
+Ethnicity of the students is a potential lurking variable since forearm length and height are also dependent on a students ethnicity.This lurking variable is not controlled in this study since we took data from students of different ethnic backgrounds. Another limitation of our fit is that the data that students submitted is prone to measurement error which also explains why there are quite a few unusual data points in our scatter plot shown in Part I. 
+
+Another pair of variables to explore a simple linear regression model is the student's score on the statistics aptitude test before beginning the course and their final statistics grade. Here, the independent or predictor variable is the score on the aptitude test and it will be used to predict the dependent or response variable which is the final statistics grade for the student. 
